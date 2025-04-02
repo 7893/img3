@@ -48,7 +48,7 @@ jobs:
               run: npm ci
 
             - name: Check types
-              run: npm run check-types
+              run: npm run check --workspace=apps/frontend
 
             - name: Lint code # 第四步：运行 Lint 检查
               # 【修改】移除 filter 参数，让 Turbo 自动发现
