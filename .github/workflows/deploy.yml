@@ -13,13 +13,12 @@ on:
 jobs:
     deploy: # 定义一个名为 deploy 的 Job
         name: Build, Test, and Deploy
-        runs-on: ubuntu-latest # 使用最新的 Ubuntu 运行器
+        runs-on: debian-12 # 使用 Debian 12 运行器
 
         env: # 在 Job 层面设置环境变量，方便后续步骤使用
             CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
             CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-            # 后续可以添加 UNSPLASH_ACCESS_KEY 等 Secret
-            # UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+            UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
 
         steps:
             - name: Checkout code # 第一步：检出代码
@@ -48,30 +47,17 @@ jobs:
               run: npm ci
 
             - name: Lint code # 第四步：运行 Lint 检查
-              # 【修改】移除 filter 参数，让 Turbo 自动发现
               run: npm run lint
 
-            # - name: Run tests # 第五步：(可选，后续添加) 运行测试
-            #   # 【修改】如果添加测试步骤，也移除 filter
-            #   run: npm run test
-
-            - name: Build projects # 第六步：运行构建
-              # 【修改】移除 filter 参数，让 Turbo 自动发现
-              run: npm run build
-
-            # --- 【保留】诊断步骤：列出构建产物 ---
-            - name: List build output
+            # --- 诊断步骤：列出前端目录内容 ---
+            - name: List frontend contents
               run: |
                   echo "--- Listing apps/frontend contents ---"
                   ls -la apps/frontend/
-                  echo "--- Listing apps/frontend/.svelte-kit contents ---"
-                  ls -la apps/frontend/.svelte-kit/ || true # 使用 || true 避免目录不存在时导致 workflow 失败
-                  echo "--- Listing apps/frontend/.svelte-kit/output contents ---"
-                  ls -la apps/frontend/.svelte-kit/output/ || true # 使用 || true
                   echo "--- Listing root directory contents ---"
                   ls -la
-            # --- 诊断步骤结束 ---
-            - name: Install Wrangler CLI # 第七步：安装 Wrangler (如果未在 devDependencies 中)
+
+            - name: Install Wrangler CLI # 第五步：安装 Wrangler
               run: npm install -g wrangler@latest
 
             # 创建队列
@@ -79,19 +65,11 @@ jobs:
               run: npx wrangler queues create img3-queue-sync-tasks-20250401
 
             # --- 部署步骤 ---
-            - name: Deploy API Worker # 第八步：部署 API Worker
+            - name: Deploy API Worker # 第六步：部署 API Worker
               run: npx wrangler deploy -c apps/api-worker/wrangler.jsonc
 
-            - name: Deploy Sync Worker # 第九步：部署 Sync Worker
+            - name: Deploy Sync Worker # 第七步：部署 Sync Worker
               run: npx wrangler deploy -c apps/sync-worker/wrangler.jsonc
 
-            - name: Deploy Frontend to Cloudflare Pages # 第十步：部署 Pages
-              # 【保留上次修正】明确指定 adapter-cloudflare 的标准输出目录 .svelte-kit/output
-              run: npx wrangler pages deploy apps/frontend/.svelte-kit/output --project-name="img3" --branch="main"
-
-            # --- Terraform Apply (可选，暂时不启用) ---
-            # - name: Setup Terraform
-            #   uses: hashicorp/setup-terraform@v3
-            # - name: Terraform Apply
-            #   working-directory: ./infrastructure
-            #   run: terraform apply -auto-approve
+            - name: Deploy Frontend to Cloudflare Pages # 第八步：部署前端到 Cloudflare Pages
+              run: npx wrangler pages deploy apps/frontend --project-name="img3" --branch="main"
