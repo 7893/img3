@@ -3,31 +3,27 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"deploy": "wrangler deploy",
-		"dev": "wrangler dev",
-		"start": "wrangler dev",
-		"test": "vitest",
-		"cf-typegen": "wrangler types",
 		"build": "wrangler build",
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy",
 		"lint": "eslint .",
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "^0.7.5",
-		"@cloudflare/workers-types": "^4.20250327.0",
+		"@cloudflare/workers-types": "^4.20240208.0",
 		"@img3/types": "workspace:*",
 		"@img3/utils": "workspace:*",
 		"@types/node": "^20.11.24",
+		"@typescript-eslint/eslint-plugin": "^7.1.0",
+		"@typescript-eslint/parser": "^7.1.0",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.1.3",
 		"prettier": "^3.2.5",
 		"typescript": "^5.3.3",
-		"vitest": "~3.0.7",
 		"wrangler": "^3.28.1"
 	},
 	"dependencies": {
-		"@sveltejs/adapter-cloudflare": "^7.0.0",
 		"hono": "^4.1.2",
 		"zod": "^3.22.4"
 	}
