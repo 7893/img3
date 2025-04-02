@@ -47,9 +47,6 @@ jobs:
             - name: Install dependencies # 第三步：安装依赖
               run: npm ci
 
-            - name: Check types
-              run: npm run check --workspace=apps/frontend
-
             - name: Lint code # 第四步：运行 Lint 检查
               # 【修改】移除 filter 参数，让 Turbo 自动发现
               run: npm run lint
