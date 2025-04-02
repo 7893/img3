@@ -5,33 +5,32 @@ name: Deploy img3
 on:
     push:
         branches:
-            - main # 当代码推送到 main 分支时触发
-    pull_request: # 在提交 Pull Request 时也触发 (用于检查)
+            - main
+    pull_request:
         branches:
             - main
 
 jobs:
-    deploy: # 定义一个名为 deploy 的 Job
-        name: Build, Test, and Deploy
-        runs-on: debian-12 # 使用 Debian 12 运行器
+    deploy:
+        name: Build and Deploy
+        runs-on: ubuntu-latest
 
-        env: # 在 Job 层面设置环境变量，方便后续步骤使用
+        env:
             CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
             CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
             UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
             GPG_TTY: $(tty)
 
         steps:
-            - name: Checkout code # 第一步：检出代码
+            - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Setup Node.js # 第二步：设置 Node.js 环境
+            - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: 22 # 使用与你本地一致的 Node.js 版本
+                  node-version: 22
                   cache: 'npm'
 
-            # 添加依赖缓存
             - name: Cache dependencies
               uses: actions/cache@v4
               with:
@@ -44,13 +43,12 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-node-
 
-            - name: Install dependencies # 第三步：安装依赖
+            - name: Install dependencies
               run: npm ci
 
-            - name: Lint code # 第四步：运行 Lint 检查
+            - name: Lint code
               run: npm run lint
 
-            # --- 诊断步骤：列出前端目录内容 ---
             - name: List frontend contents
               run: |
                   echo "--- Listing apps/frontend contents ---"
@@ -58,19 +56,17 @@ jobs:
                   echo "--- Listing root directory contents ---"
                   ls -la
 
-            - name: Install Wrangler CLI # 第五步：安装 Wrangler
+            - name: Install Wrangler CLI
               run: npm install -g wrangler@latest
 
-            # 创建队列
             - name: Create Queue
               run: npx wrangler queues create img3-queue-sync-tasks-20250401
 
-            # --- 部署步骤 ---
-            - name: Deploy API Worker # 第六步：部署 API Worker
+            - name: Deploy API Worker
               run: npx wrangler deploy -c apps/api-worker/wrangler.jsonc
 
-            - name: Deploy Sync Worker # 第七步：部署 Sync Worker
+            - name: Deploy Sync Worker
               run: npx wrangler deploy -c apps/sync-worker/wrangler.jsonc
 
-            - name: Deploy Frontend to Cloudflare Pages # 第八步：部署前端到 Cloudflare Pages
+            - name: Deploy Frontend to Cloudflare Pages
               run: npx wrangler pages deploy apps/frontend --project-name="img3" --branch="main"
