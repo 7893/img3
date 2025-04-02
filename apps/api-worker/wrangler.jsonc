@@ -1,0 +1,47 @@
+{
+	"name": "img3-api-worker-20250401",
+	"main": "src/index.ts",
+	"compatibility_date": "2024-03-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "SYNC_COORDINATOR_DO",
+				"class_name": "SyncCoordinatorDO",
+			},
+		],
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_classes": ["SyncCoordinatorDO"],
+		},
+	],
+	"r2_buckets": [
+		{
+			"binding": "IMAGE_BUCKET",
+			"bucket_name": "r2-img3-20250401",
+		},
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "d1-unsplash-20250401",
+			"database_id": "51532b98-11ca-43a0-9dd5-de4bba55720e",
+		},
+	],
+	"kv_namespaces": [
+		{
+			"binding": "KV_CACHE",
+			"id": "d86dd666587b492a8f3a5ac9db66ff27",
+		},
+	],
+	"queues": {
+		"producers": [
+			{
+				"binding": "SYNC_TASK_QUEUE",
+				"queue": "img3-queue-sync-tasks-20250401",
+			},
+		],
+	},
+}

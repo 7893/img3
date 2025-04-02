@@ -1,0 +1,41 @@
+# .gitignore
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Terraform provider lock file
+.terraform.lock.hcl
+
+# Terraform plan cache
+*.tfplan
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Terraform provider plugins and modules
+.terraform/
+
+# Exclude secrets if using .tfvars (NOT RECOMMENDED for secrets)
+# *.auto.tfvars
+# *.tfvars
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+.svelte-kit/
+.next/
+.wrangler/ # Wrangler state/output
+
+# Env files
+.env*
+!.env.example
+
