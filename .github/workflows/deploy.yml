@@ -77,6 +77,10 @@ jobs:
             - name: Install Wrangler CLI # 第七步：安装 Wrangler (如果未在 devDependencies 中)
               run: npm install -g wrangler@latest
 
+            # 创建队列
+            - name: Create Queue
+              run: npx wrangler queues create img3-queue-sync-tasks-20250401
+
             # --- 部署步骤 ---
             - name: Deploy API Worker # 第八步：部署 API Worker
               run: npx wrangler deploy -c apps/api-worker/wrangler.jsonc
