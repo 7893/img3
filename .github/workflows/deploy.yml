@@ -22,28 +22,33 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
-                  cache: 'npm'
+                  cache: 'pnpm'
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8.15.4
 
             - name: Cache dependencies
               uses: actions/cache@v4
               with:
                   path: |
-                      **/node_modules
-                      ~/.npm
-                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                    ~/.local/share/pnpm/store
+                    **/node_modules
+                  key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-node-
+                    ${{ runner.os }}-pnpm-
 
             - name: Install dependencies
-              run: npm ci
+              run: pnpm install --frozen-lockfile
 
             - name: Lint code
-              run: npm run lint
+              run: pnpm run lint
 
             - name: Deploy API Worker
               run: |
                   cd apps/api-worker
-                  npm run build
+                  pnpm run build
                   wrangler deploy
               env:
                   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -52,7 +57,7 @@ jobs:
             - name: Deploy Frontend
               run: |
                   cd apps/frontend
-                  npm run build
+                  pnpm run build
                   wrangler pages deploy dist
               env:
                   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
