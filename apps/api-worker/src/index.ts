@@ -35,7 +35,7 @@ export class SyncCoordinatorDO implements DurableObject {
 	}
 
 	// Durable Object 必须实现 fetch 方法，用于响应直接对 DO 的请求或 Worker 通过 stub.fetch() 的调用
-	async fetch(request: Request): Promise<Response> {
+	async fetch(_request: Request): Promise<Response> {
 		// 这里是 DO 处理请求的入口
 		// 暂时返回一个简单的响应，表明 DO 正常工作
 		// 后续我们会在这里添加管理同步状态的核心逻辑
@@ -54,9 +54,9 @@ export class SyncCoordinatorDO implements DurableObject {
 
 // --- Worker 的默认导出 (Fetch 处理程序) ---
 export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+	async fetch(_request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
 		// 使用 Env 接口访问绑定，获得类型提示
-		const url = new URL(request.url);
+		const url = new URL(_request.url);
 
 		// 1. 基础健康检查路由
 		if (url.pathname === '/' || url.pathname === '/health') {
@@ -76,11 +76,11 @@ export default {
 				const stub = env.SYNC_COORDINATOR_DO.get(doId);
 				// 将请求转发给 DO 的 fetch 处理程序 (或者构造新请求)
 				console.log(`API Worker: Forwarding request to DO for path: ${url.pathname}`);
-				const doResponse = await stub.fetch(request);
+				const doResponse = await stub.fetch(_request);
 				return doResponse;
-			} catch (error: any) {
+			} catch (error: unknown) {
 				console.error('API Worker: Error interacting with DO:', error);
-				return new Response(`Error interacting with DO: ${error.message}`, { status: 500 });
+				return new Response(`Error interacting with DO: ${error instanceof Error ? error.message : String(error)}`, { status: 500 });
 			}
 		}
 
