@@ -1,7 +1,7 @@
 
 
 > api-worker@0.0.0 lint /home/admin/img3/apps/api-worker
-> eslint . "--fix"
+> eslint .
 
 =============
 

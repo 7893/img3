@@ -82,7 +82,7 @@ importers:
   apps/frontend:
     devDependencies:
       vite:
-        specifier: ^5.0.0
+        specifier: ^5.1.4
         version: 5.4.16
 
   apps/sync-worker:

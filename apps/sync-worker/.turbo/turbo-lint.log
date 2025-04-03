@@ -1,7 +1,7 @@
 
 
 > sync-worker@0.0.0 lint /home/admin/img3/apps/sync-worker
-> eslint . "--fix"
+> eslint .
 
 =============
 
