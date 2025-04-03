@@ -1,44 +1,35 @@
 # .github/workflows/deploy.yml
 
-name: Deploy img3
+name: Deploy
 
 on:
     push:
-        branches:
-            - main
+        branches: [ main ]
     pull_request:
-        branches:
-            - main
+        branches: [ main ]
+
+env:
+    NODE_VERSION: '20'
+    UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
 
 jobs:
-    deploy:
-        name: Build and Deploy
+    build-and-deploy:
         runs-on: ubuntu-latest
-
-        env:
-            CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-            CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-            UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-            GPG_TTY: $(tty)
-
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+            - uses: actions/checkout@v4
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: 22
+                  node-version: ${{ env.NODE_VERSION }}
                   cache: 'npm'
 
             - name: Cache dependencies
               uses: actions/cache@v4
               with:
                   path: |
+                      **/node_modules
                       ~/.npm
-                      node_modules
-                      apps/*/node_modules
-                      packages/*/node_modules
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
                       ${{ runner.os }}-node-
@@ -49,24 +40,20 @@ jobs:
             - name: Lint code
               run: npm run lint
 
-            - name: List frontend contents
-              run: |
-                  echo "--- Listing apps/frontend contents ---"
-                  ls -la apps/frontend/
-                  echo "--- Listing root directory contents ---"
-                  ls -la
-
-            - name: Install Wrangler CLI
-              run: npm install -g wrangler@latest
-
-            - name: Create Queue
-              run: npx wrangler queues create img3-queue-sync-tasks-20250401
-
             - name: Deploy API Worker
-              run: npx wrangler deploy -c apps/api-worker/wrangler.jsonc
+              run: |
+                  cd apps/api-worker
+                  npm run build
+                  wrangler deploy
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-            - name: Deploy Sync Worker
-              run: npx wrangler deploy -c apps/sync-worker/wrangler.jsonc
-
-            - name: Deploy Frontend to Cloudflare Pages
-              run: npx wrangler pages deploy apps/frontend --project-name="img3" --branch="main"
+            - name: Deploy Frontend
+              run: |
+                  cd apps/frontend
+                  npm run build
+                  wrangler pages deploy dist
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
