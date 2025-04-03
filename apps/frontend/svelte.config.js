@@ -1,6 +1,5 @@
 import adapter from '@sveltejs/adapter-cloudflare';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import { svelteTesting } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -12,7 +11,6 @@ const config = {
 				workspace: [
 					{
 						extends: './vite.config.ts',
-						plugins: [svelteTesting()],
 						test: {
 							name: 'client',
 							environment: 'jsdom',
