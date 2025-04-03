@@ -54,9 +54,9 @@ export class SyncCoordinatorDO implements DurableObject {
 
 // --- Worker 的默认导出 (Fetch 处理程序) ---
 export default {
-	async fetch(_request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
+	async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
 		// 使用 Env 接口访问绑定，获得类型提示
-		const url = new URL(_request.url);
+		const url = new URL(request.url);
 
 		// 1. 基础健康检查路由
 		if (url.pathname === '/' || url.pathname === '/health') {
@@ -76,7 +76,7 @@ export default {
 				const stub = env.SYNC_COORDINATOR_DO.get(doId);
 				// 将请求转发给 DO 的 fetch 处理程序 (或者构造新请求)
 				console.log(`API Worker: Forwarding request to DO for path: ${url.pathname}`);
-				const doResponse = await stub.fetch(_request);
+				const doResponse = await stub.fetch(request);
 				return doResponse;
 			} catch (error: unknown) {
 				console.error('API Worker: Error interacting with DO:', error);
