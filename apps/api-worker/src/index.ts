@@ -9,6 +9,13 @@ interface Env {
 	DB: D1Database;
 	KV_CACHE: KVNamespace;
 	SYNC_TASK_QUEUE: Queue;
+	SYNC_COORDINATOR_DO: DurableObjectNamespace;
+}
+
+export class SyncCoordinatorDO implements DurableObject {
+	async fetch(_request: Request): Promise<Response> {
+		return new Response('SyncCoordinatorDO is running');
+	}
 }
 
 export default {
