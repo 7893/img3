@@ -1,35 +1,17 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "globalDependencies": ["tsconfig.base.json"],
-    "tasks": {
-        "dev": {
-            "dependsOn": ["^build"],
-            "cache": false,
-            "persistent": true
-        },
+    "pipeline": {
         "build": {
             "dependsOn": ["^build"],
-            "outputs": [
-                ".svelte-kit/**",
-                "!.svelte-kit/types/**",
-                "dist/**",
-                "build/**",
-                ".wrangler/**"
-            ],
-            "cache": true
+            "outputs": ["dist/**"]
         },
         "lint": {
-            "cache": true,
             "outputs": []
         },
-        "test": {
-            "dependsOn": ["build"],
-            "cache": true,
-            "outputs": ["coverage/**"]
-        },
-        "deploy": {
-            "dependsOn": ["build", "test"],
-            "cache": false
+        "dev": {
+            "cache": false,
+            "persistent": true
         }
     }
 }

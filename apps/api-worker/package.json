@@ -10,7 +10,7 @@
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20240208.0",
+		"@cloudflare/workers-types": "^4.20250403.0",
 		"@img3/types": "workspace:*",
 		"@img3/utils": "workspace:*",
 		"@types/node": "^20.11.24",

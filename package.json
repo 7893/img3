@@ -6,21 +6,23 @@
         "dev": "turbo run dev",
         "lint": "turbo run lint",
         "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-        "check-types": "turbo run check-types",
-        "preview": "turbo run preview"
+        "prepare": "husky install"
     },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^7.1.0",
-        "@typescript-eslint/parser": "^7.1.0",
+        "@types/node": "^20.11.24",
+        "@typescript-eslint/eslint-plugin": "^7.1.1",
+        "@typescript-eslint/parser": "^7.1.1",
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.1.3",
+        "husky": "^9.0.11",
+        "lint-staged": "^15.2.2",
         "prettier": "^3.2.5",
-        "turbo": "latest",
-        "typescript": "^5.3.3"
+        "turbo": "^1.12.4",
+        "typescript": "5.8.2"
     },
     "engines": {
-        "node": ">=18"
+        "node": ">=18.0.0"
     },
     "packageManager": "pnpm@8.15.4",
     "version": "1.0.0",
