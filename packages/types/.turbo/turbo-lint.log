@@ -1,0 +1,5 @@
+
+
+> @img3/types@0.0.0 lint /home/admin/img3/packages/types
+> eslint . "--fix"
+
