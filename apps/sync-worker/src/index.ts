@@ -15,9 +15,9 @@ interface Env {
 
 // 定义消息类型
 interface SyncMessage {
-    page: number;
-    perPage: number;
-    timestamp: string;
+	page: number;
+	perPage: number;
+	timestamp: string;
 }
 
 export default {
@@ -30,11 +30,7 @@ export default {
 
 	// 【新增】处理来自 Queue 的消息
 	// 这个函数必须被导出，以响应 wrangler.jsonc 中的 consumers 配置
-	async queue(
-		batch: MessageBatch<SyncMessage>,
-		_env: Env,
-		_ctx: ExecutionContext,
-	): Promise<void> {
+	async queue(batch: MessageBatch<SyncMessage>, _env: Env, _ctx: ExecutionContext): Promise<void> {
 		console.log(`Sync Worker queue handler invoked. Batch size: ${batch.messages.length}`);
 
 		// 遍历处理批次中的每条消息
