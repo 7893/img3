@@ -13,10 +13,17 @@ interface Env {
 	// Secrets...
 }
 
+// 定义消息类型
+interface SyncMessage {
+    page: number;
+    perPage: number;
+    timestamp: string;
+}
+
 export default {
 	// Worker 的主入口，通常响应 HTTP 请求，对于后台 Worker 可能不是主要功能
 	// 但保留一个基础的 fetch 处理程序通常是好的做法
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+	async fetch(_request: Request, _env: Env, _ctx: ExecutionContext): Promise<Response> {
 		console.log('Sync Worker fetch handler invoked (likely health check or direct trigger)');
 		return new Response('Sync Worker is running OK!');
 	},
@@ -24,9 +31,9 @@ export default {
 	// 【新增】处理来自 Queue 的消息
 	// 这个函数必须被导出，以响应 wrangler.jsonc 中的 consumers 配置
 	async queue(
-		batch: MessageBatch<any>, // <any> 可以替换为更具体的类型，如果消息有固定结构
-		env: Env,
-		ctx: ExecutionContext,
+		batch: MessageBatch<SyncMessage>,
+		_env: Env,
+		_ctx: ExecutionContext,
 	): Promise<void> {
 		console.log(`Sync Worker queue handler invoked. Batch size: ${batch.messages.length}`);
 
